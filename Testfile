@@ -1,0 +1,161 @@
+package org.assignment1;
+import org.assignment1.Calculator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.logging.Logger;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Random;
+
+
+public class TestCalculator {
+	private Calculator calculator;
+	
+	//To set up
+	@Before
+	public void setup() {
+		calculator = new Calculator();
+	}
+	
+	// To tear down
+	@After
+	public void teardown() {
+		calculator = null;
+	}
+
+    @Test
+    void testMultiply() {
+        Calculator calculator = new Calculator();
+        
+        // Test multiplication of positive numbers
+        assertEquals(27, calculator.multiply(3, 9));
+        
+        // Test multiplication of negative numbers
+        assertEquals(-24, calculator.multiply(-3, 8));
+        
+        // Test multiplication with zero
+        assertEquals(0, calculator.multiply(0, 7));
+        }
+
+    @Test
+    void testDivide() {
+        Calculator calculator = new Calculator();
+        
+        // Test division of positive numbers
+        assertEquals(3, calculator.divide(9, 3));
+        
+        // Test division of negative numbers
+        assertEquals(-3, calculator.divide(9, -3));
+        
+        // Test division with one operand as zero
+        assertEquals(0, calculator.divide(0, 100));
+        }
+
+    @Test
+    void testModulus() {
+        Calculator calculator = new Calculator();
+        
+        // Test modulus of positive numbers
+        assertEquals(2, calculator.modulus(5, 3));
+        
+        // Test modulus of negative numbers
+        assertEquals(-2, calculator.modulus(-5, 3));
+        
+        // Test modulus with one operand as zero
+        assertEquals(0, calculator.modulus(0, 100));
+        }
+    
+    //Test case to test exception handling when divide by zero for divide method
+    @Test
+    void testDivideByZero() {
+        Calculator calculator = new Calculator();
+        
+        // Test division by zero
+        assertThrows(IllegalArgumentException.class, () -> {
+            calculator.divide(6, 0);
+        });
+    }
+    // Test case to test exception handling when divide by zero for Modulus method
+    @Test
+    void testModulusByZero() {
+        Calculator calculator = new Calculator();
+        
+        // Test modulus by zero
+        assertThrows(IllegalArgumentException.class, () -> {
+            calculator.modulus(6, 0);
+        });
+     
+    }
+    
+    // Test cases for the federalTaxBracket method
+    @Test
+    void testFederalTaxBracket() {
+        Calculator calculator = new Calculator();
+
+        // Test income values for each tax bracket boundary and beyond
+
+    	// Below 53360 (First bracket)
+        assertEquals("first", calculator.federalTaxBracket(10000));
+        assertEquals("first", calculator.federalTaxBracket(50000));
+        assertEquals("first", calculator.federalTaxBracket(53359));
+        
+        // Between 53360 and 106718 (Second bracket)
+        assertEquals("second", calculator.federalTaxBracket(53360));
+        assertEquals("second", calculator.federalTaxBracket(80000));
+        assertEquals("second", calculator.federalTaxBracket(106717));
+        
+        // Between 106718 and 165431 (Third bracket)
+        assertEquals("third", calculator.federalTaxBracket(106718));
+        assertEquals("third", calculator.federalTaxBracket(140000));
+        assertEquals("third", calculator.federalTaxBracket(165430));
+        
+        // Between 165431 and 235675 (Fourth bracket)
+        assertEquals("forth", calculator.federalTaxBracket(165431));
+        assertEquals("forth", calculator.federalTaxBracket(200000));
+        assertEquals("forth", calculator.federalTaxBracket(235674));
+        
+        // Above 235675 (Fifth bracket)
+        assertEquals("fifth", calculator.federalTaxBracket(235676));
+        assertEquals("fifth", calculator.federalTaxBracket(300000));
+    }
+    
+    //usage of mockito to create mocks
+    @Test
+    void testFederalTaxBracketMockito() {
+        // Create a mock Calculator
+        Calculator calculatorMock = mock(Calculator.class);
+        
+        // Definining the behavior of the federalTaxBracket method
+        when(calculatorMock.federalTaxBracket(anyInt())).thenAnswer(invocation -> {
+            int income = invocation.getArgument(0);
+            if (income > 235675) {
+                return "fifth";
+            } else if (income >= 165431) {
+                return "forth";
+            } else if (income >= 106718) {
+                return "third";
+            } else if (income >= 53360) {
+                return "second";
+            } else {
+                return "first";
+            }
+        });
+        
+        // Call the method under test with different income values
+        assertEquals("first", calculatorMock.federalTaxBracket(40000));
+        assertEquals("second", calculatorMock.federalTaxBracket(60000));
+        assertEquals("third", calculatorMock.federalTaxBracket(120000));
+        assertEquals("forth", calculatorMock.federalTaxBracket(180000));
+        assertEquals("fifth", calculatorMock.federalTaxBracket(250000));
+    }
+
+    }
+
+
+       
+
+
+
